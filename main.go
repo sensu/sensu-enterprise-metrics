@@ -22,9 +22,10 @@ func main() {
 	user := flag.String("user", "", "Sensu Enterprise API user.")
 	pass := flag.String("password", "", "Sensu Enterprise API password.")
 	timeout := flag.Int("timeout", 15, "Sensu Enterprise API request timeout (in seconds).")
+	latest := flag.Bool("latest", false, "Only return the latest point per Enterprise metric.")
 	flag.Parse()
 
-	output, err := getMetrics(*host, *port, *user, *pass, *timeout)
+	output, err := getMetrics(*host, *port, *user, *pass, *timeout, *latest)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(2)
@@ -60,7 +61,7 @@ func apiRequest(url string, user string, pass string, timeout int) ([]byte, erro
 	return body, err
 }
 
-func getMetrics(host string, port int, user string, pass string, timeout int) (string, error) {
+func getMetrics(host string, port int, user string, pass string, timeout int, latest bool) (string, error) {
 	metrics := []string{"check_requests", "clients", "events", "keepalives", "results"}
 	output := ""
 
@@ -74,9 +75,15 @@ func getMetrics(host string, port int, user string, pass string, timeout int) (s
 		var metric Metric
 		json.Unmarshal(body, &metric)
 
-		for _, p := range metric.Points {
+		if latest {
+			p := metric.Points[len(metric.Points)-1]
 			line := fmt.Sprintf("sensu_enterprise_%s %v %v\n", m, p[1], p[0])
 			output = output + line
+		} else {
+			for _, p := range metric.Points {
+				line := fmt.Sprintf("sensu_enterprise_%s %v %v\n", m, p[1], p[0])
+				output = output + line
+			}
 		}
 	}
 
