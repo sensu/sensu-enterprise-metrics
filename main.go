@@ -61,14 +61,24 @@ func apiRequest(url string, user string, pass string, timeout int) ([]byte, erro
 }
 
 func getMetrics(host string, port int, user string, pass string, timeout int) (string, error) {
-	url := "http://" + host + ":" + strconv.Itoa(port) + "/metrics/check_requests"
-	body, err := apiRequest(url, user, pass, timeout)
-	if err != nil {
-		return "", err
+	metrics := []string{"check_requests", "clients", "events", "keepalives", "results"}
+	output := ""
+
+	for _, m := range metrics {
+		url := "http://" + host + ":" + strconv.Itoa(port) + "/metrics/check_requests"
+		body, err := apiRequest(url, user, pass, timeout)
+		if err != nil {
+			return "", err
+		}
+
+		var metric Metric
+		json.Unmarshal(body, &metric)
+
+		for _, p := range metric.Points {
+			line := fmt.Sprintf("sensu_enterprise_%s %v %v\n", m, p[1], p[0])
+			output = output + line
+		}
 	}
 
-	var metric Metric
-	json.Unmarshal(body, &metric)
-
-	return metric.Metric, nil
+	return output, nil
 }
