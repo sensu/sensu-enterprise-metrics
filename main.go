@@ -122,7 +122,7 @@ func getMetrics() (string, error) {
 	}
 
 	for _, m := range metrics {
-		url := fmt.Sprintf("%s://%s:%d/metrics/check_requests", *scheme, *host, *port)
+		url := fmt.Sprintf("%s://%s:%d/metrics/%s", *scheme, *host, *port, m)
 		body, err := apiRequest(client, url, *user, *pass, *timeout)
 		if err != nil {
 			return "", err
@@ -130,7 +130,6 @@ func getMetrics() (string, error) {
 
 		var metric Metric
 		json.Unmarshal(body, &metric)
-
 		if *latest {
 			p := metric.Points[len(metric.Points)-1]
 			line := fmt.Sprintf("sensu_enterprise_%s %v %v\n", m, p[1], p[0])
