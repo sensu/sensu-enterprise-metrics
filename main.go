@@ -122,7 +122,7 @@ func getMetrics() (string, error) {
 	}
 
 	for _, m := range metrics {
-		url := fmt.Sprintf("%s://%s:%d/metrics/check_requests", *scheme, *host, *port)
+		url := fmt.Sprintf("%s://%s:%d/metrics/%s", *scheme, *host, *port, m)
 		body, err := apiRequest(client, url, *user, *pass, *timeout)
 		if err != nil {
 			return "", err
