@@ -130,6 +130,7 @@ func getMetrics() (string, error) {
 
 		var metric Metric
 		json.Unmarshal(body, &metric)
+
 		if *latest {
 			p := metric.Points[len(metric.Points)-1]
 			line := fmt.Sprintf("sensu_enterprise_%s %v %v\n", m, p[1], p[0])
