@@ -46,18 +46,24 @@ Help:
 ```
 $ sensu-enterprise-metrics -h
 Usage of sensu-enterprise-metrics:
+  -ca-cert string
+    	Path to CA certificate
   -host string
-        Sensu Enterprise API host. (default "localhost")
+    	Sensu Enterprise API host. (default "localhost")
+  -insecure-skip-verify
+    	Don't verify TLS hostnames
   -latest
-        Only return the latest point per Enterprise metric.
+    	Only return the latest point per Enterprise metric.
   -password string
-        Sensu Enterprise API password.
+    	Sensu Enterprise API password.
   -port int
-        Sensu Enterprise API port. (default 4567)
+    	Sensu Enterprise API port. (default 4567)
+  -scheme string
+    	Sensu Enterprise URL scheme (http or https) (default "http")
   -timeout int
-        Sensu Enterprise API request timeout (in seconds). (default 15)
+    	Sensu Enterprise API request timeout (in seconds). (default 15)
   -user string
-        Sensu Enterprise API user.
+    	Sensu Enterprise API user.
 ```
 
 ## Contributing
